@@ -41,6 +41,16 @@ class Settings(BaseSettings):
         )
 
     @property
+    def alembic_database_url(self) -> str:
+        """Возвращает sync URL подключения к PostgreSQL для миграций."""
+        return (
+            f"postgresql+psycopg://"
+            f"{self.postgres_user}:{self.postgres_password}"
+            f"@{self.postgres_host}:{self.postgres_port}"
+            f"/{self.postgres_db}"
+        )
+
+    @property
     def redis_url(self) -> str:
         """Возвращает строку подключения к Redis."""
         return f"redis://{self.redis_host}:{self.redis_port}"
