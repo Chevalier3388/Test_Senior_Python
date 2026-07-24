@@ -3,3 +3,4 @@ sqlalchemy
 asyncpg
 alembic
 psycopg[binary]
+pydantic
