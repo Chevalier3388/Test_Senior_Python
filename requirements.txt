@@ -4,3 +4,4 @@ asyncpg
 alembic
 psycopg[binary]
 pydantic
+pwdlib[argon2]
