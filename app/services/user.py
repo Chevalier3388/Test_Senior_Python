@@ -47,26 +47,32 @@ class UserService:
         return await self.repository.get_by_id(user_id)
 
     async def authenticate(
-            self,
-            data: UserLogin,
+        self,
+        data: UserLogin,
     ) -> User:
         """Проверяет пользователя и пароль."""
 
-        user = await self.repository.get_by_email(
-            data.email
-        )
+        user = await self.repository.get_by_email(data.email)
 
         if not user:
-            raise InvalidCredentialsError(
-                "Неверный email или пароль"
-            )
+            raise InvalidCredentialsError("Неверный email или пароль")
 
         if not verify_password(
-                data.password,
-                user.password_hash,
+            data.password,
+            user.password_hash,
         ):
-            raise InvalidCredentialsError(
-                "Неверный email или пароль"
-            )
+            raise InvalidCredentialsError("Неверный email или пароль")
 
         return user
+
+    async def get_users(
+        self,
+        limit: int,
+        offset: int,
+    ) -> list[User]:
+        """Возвращает список пользователей."""
+
+        return await self.repository.get_all_users(
+            limit=limit,
+            offset=offset,
+        )

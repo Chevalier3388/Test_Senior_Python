@@ -39,3 +39,14 @@ class UserRepository:
         await self.session.refresh(user)
 
         return user
+
+    async def get_all_users(
+        self,
+        limit: int,
+        offset: int,
+    ) -> list[User]:
+        """Получить список пользователей."""
+
+        result = await self.session.execute(select(User).limit(limit).offset(offset))
+
+        return list(result.scalars().all())

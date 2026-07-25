@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import create_access_token
@@ -11,6 +11,7 @@ router = APIRouter(
     prefix="/users",
     tags=["Users"],
 )
+
 
 @router.post(
     "/register",
@@ -49,3 +50,31 @@ async def login(
     return TokenResponse(
         access_token=token,
     )
+
+
+@router.get(
+    "",
+    response_model=list[UserResponse],
+)
+async def get_users(
+    limit: int = Query(
+        default=50,
+        ge=1,
+        le=100,
+    ),
+    offset: int = Query(
+        default=0,
+        ge=0,
+    ),
+    session: AsyncSession = Depends(get_async_session),
+) -> list[UserResponse]:
+    """Возвращает список пользователей."""
+
+    service = UserService(session)
+
+    users = await service.get_users(
+        limit=limit,
+        offset=offset,
+    )
+
+    return [UserResponse.model_validate(user) for user in users]
