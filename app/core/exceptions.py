@@ -1,6 +1,14 @@
 class UserAlreadyExistsError(Exception):
-    """Пользователь с таким email уже существует."""
+    def __init__(
+        self,
+        message: str = "Пользователь с таким адресом электронной почты уже существует",
+    ) -> None:
+        super().__init__(message)
 
 
 class InvalidCredentialsError(Exception):
-    """Неверный email или пароль."""
+    def __init__(
+        self,
+        message: str = "Неверный email или пароль",
+    ) -> None:
+        super().__init__(message)

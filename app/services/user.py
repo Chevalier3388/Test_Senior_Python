@@ -27,9 +27,7 @@ class UserService:
         existing_user = await self.repository.get_by_email(data.email)
 
         if existing_user:
-            raise UserAlreadyExistsError(
-                "Пользователь с таким адресом электронной почты уже существует"
-            )
+            raise UserAlreadyExistsError()
 
         user = User(
             email=data.email,
@@ -55,13 +53,13 @@ class UserService:
         user = await self.repository.get_by_email(data.email)
 
         if not user:
-            raise InvalidCredentialsError("Неверный email или пароль")
+            raise InvalidCredentialsError()
 
         if not verify_password(
             data.password,
             user.password_hash,
         ):
-            raise InvalidCredentialsError("Неверный email или пароль")
+            raise InvalidCredentialsError()
 
         return user
 

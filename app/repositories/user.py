@@ -1,8 +1,10 @@
 from uuid import UUID
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import UserAlreadyExistsError
 from app.models.user import User
 
 
@@ -34,7 +36,13 @@ class UserRepository:
 
         self.session.add(user)
 
-        await self.session.commit()
+        try:
+            await self.session.commit()
+
+        except IntegrityError as exc:
+            await self.session.rollback()
+
+            raise UserAlreadyExistsError() from exc
 
         await self.session.refresh(user)
 
