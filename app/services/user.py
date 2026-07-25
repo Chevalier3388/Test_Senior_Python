@@ -2,11 +2,11 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import UserAlreadyExistsError
-from app.core.security import hash_password
+from app.core.exceptions import UserAlreadyExistsError, InvalidCredentialsError
+from app.core.security import hash_password, verify_password
 from app.models.user import User
 from app.repositories.user import UserRepository
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserLogin
 
 
 class UserService:
@@ -45,3 +45,28 @@ class UserService:
         """Возвращает пользователя по ID."""
 
         return await self.repository.get_by_id(user_id)
+
+    async def authenticate(
+            self,
+            data: UserLogin,
+    ) -> User:
+        """Проверяет пользователя и пароль."""
+
+        user = await self.repository.get_by_email(
+            data.email
+        )
+
+        if not user:
+            raise InvalidCredentialsError(
+                "Неверный email или пароль"
+            )
+
+        if not verify_password(
+                data.password,
+                user.password_hash,
+        ):
+            raise InvalidCredentialsError(
+                "Неверный email или пароль"
+            )
+
+        return user
