@@ -6,3 +6,4 @@ psycopg[binary]
 pydantic
 pwdlib[argon2]
 pyjwt
+fastapi

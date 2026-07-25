@@ -1,4 +1,5 @@
 from app.db.database import Base
+
 # Import для Alembic
 import app.models  # noqa: F401
 from app.core.config import settings
@@ -74,9 +75,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

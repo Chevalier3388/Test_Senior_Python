@@ -18,16 +18,13 @@ class UserService:
     ):
         self.repository = UserRepository(session)
 
-
     async def create_user(
         self,
         data: UserCreate,
     ) -> User:
         """Создает нового пользователя."""
 
-        existing_user = await self.repository.get_by_email(
-            data.email
-        )
+        existing_user = await self.repository.get_by_email(data.email)
 
         if existing_user:
             raise UserAlreadyExistsError(
@@ -36,13 +33,10 @@ class UserService:
 
         user = User(
             email=data.email,
-            password_hash=hash_password(
-                data.password
-            ),
+            password_hash=hash_password(data.password),
         )
 
         return await self.repository.create(user)
-
 
     async def get_user(
         self,
