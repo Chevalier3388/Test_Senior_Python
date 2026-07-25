@@ -34,6 +34,8 @@ class UserRepository:
 
         self.session.add(user)
 
-        await self.session.flush()
+        await self.session.commit()
+
+        await self.session.refresh(user)
 
         return user
