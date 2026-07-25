@@ -4,6 +4,8 @@ asyncpg
 alembic
 psycopg[binary]
 pydantic
+email-validator
 pwdlib[argon2]
 pyjwt
 fastapi
+uvicorn[standard]
