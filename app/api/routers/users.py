@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.auth import get_current_user
+from app.api.dependencies.rate_limit import rate_limit_register
 from app.core.security import create_access_token
 from app.db.database import get_async_session
 from app.models.user import User
@@ -19,6 +20,9 @@ router = APIRouter(
     "/register",
     response_model=UserResponse,
     status_code=201,
+    dependencies=[
+        Depends(rate_limit_register),
+    ],
 )
 async def register(
     data: UserCreate,
@@ -72,7 +76,4 @@ async def get_users(
         offset=offset,
     )
 
-    return [
-        UserResponse.model_validate(user)
-        for user in users
-    ]
+    return [UserResponse.model_validate(user) for user in users]
