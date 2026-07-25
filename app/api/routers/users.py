@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.dependencies.auth import get_current_user
 from app.core.security import create_access_token
 from app.db.database import get_async_session
+from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse, UserLogin, TokenResponse
 from app.services.user import UserService
 
@@ -57,18 +59,11 @@ async def login(
     response_model=list[UserResponse],
 )
 async def get_users(
-    limit: int = Query(
-        default=50,
-        ge=1,
-        le=100,
-    ),
-    offset: int = Query(
-        default=0,
-        ge=0,
-    ),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ) -> list[UserResponse]:
-    """Возвращает список пользователей."""
 
     service = UserService(session)
 
@@ -77,4 +72,7 @@ async def get_users(
         offset=offset,
     )
 
-    return [UserResponse.model_validate(user) for user in users]
+    return [
+        UserResponse.model_validate(user)
+        for user in users
+    ]
