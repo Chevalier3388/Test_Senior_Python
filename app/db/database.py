@@ -11,6 +11,7 @@ from app.core.config import settings
 
 
 class Base(DeclarativeBase):
+    """Базовый класс для SQLAlchemy моделей приложения."""
     pass
 
 
@@ -28,5 +29,6 @@ async_session_maker = async_sessionmaker(
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    """Предоставляет асинхронную сессию базы данных."""
     async with async_session_maker() as session:
         yield session
