@@ -1,4 +1,12 @@
 services:
+  app:
+    build: .
+    container_name: user_management_app
+    ports:
+      - "${APP_PORT}:8000"
+    depends_on:
+      - postgres
+      - redis
   postgres:
     image: postgres:17
     container_name: user_management_postgres

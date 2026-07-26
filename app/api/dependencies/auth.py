@@ -10,7 +10,7 @@ from app.models.user import User
 from app.repositories.user import UserRepository
 
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
@@ -18,6 +18,14 @@ async def get_current_user(
     session: AsyncSession = Depends(get_async_session),
 ) -> User:
     """Возвращает текущего пользователя по JWT."""
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Требуется авторизация",
+            headers={
+                "WWW-Authenticate": "Bearer",
+            },
+        )
 
     token = credentials.credentials
 
