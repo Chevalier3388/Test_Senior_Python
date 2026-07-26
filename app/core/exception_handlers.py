@@ -1,9 +1,10 @@
-from typing import cast
-
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from app.core.exceptions import UserAlreadyExistsError
+from app.core.exceptions import (
+    InvalidCredentialsError,
+    UserAlreadyExistsError,
+)
 
 
 async def user_already_exists_handler(
@@ -13,11 +14,26 @@ async def user_already_exists_handler(
     """
     Обрабатывает ошибку существующего пользователя.
     """
-    error = cast(UserAlreadyExistsError, exc)
 
     return JSONResponse(
         status_code=400,
         content={
-            "detail": str(error),
+            "detail": str(exc),
+        },
+    )
+
+
+async def invalid_credentials_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    """
+    Обрабатывает ошибку авторизации.
+    """
+
+    return JSONResponse(
+        status_code=401,
+        content={
+            "detail": str(exc),
         },
     )

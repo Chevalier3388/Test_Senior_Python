@@ -29,12 +29,18 @@ async def get_current_user(
 
     token = credentials.credentials
 
-    payload = decode_token(token)
+    try:
+        payload = decode_token(token)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Недействительный токен",
+        )
 
     if payload.get("type") != "access":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token type",
+            detail="Недопустимый тип токена",
         )
 
     try:
@@ -42,7 +48,7 @@ async def get_current_user(
     except (KeyError, ValueError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Некорректный токен",
         )
 
     repository = UserRepository(session)
@@ -52,7 +58,7 @@ async def get_current_user(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
+            detail="Пользователь не найден",
         )
 
     return user
